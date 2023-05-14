@@ -3,7 +3,7 @@ const axios = require('axios');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('watch')
+    .setName('check')
     .setDescription('Analyzes a token.')
     .addStringOption((option) =>
       option.setName('tokenaddress')
