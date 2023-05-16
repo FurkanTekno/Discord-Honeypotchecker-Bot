@@ -13,21 +13,24 @@ module.exports = {
   async execute(interaction) {
     const tokenAddress = interaction.options.getString('tokenaddress');
 
-    try {
+   try {
       const response = await axios.get(`https://approve.aegisweb3.com/api/User/TokenSecurity?address=${tokenAddress}&chainid=1`);
       const { errorCode, errorMsg, result } = response.data;
       const { token_name, token_symbol, is_scamtoken, is_anti_whale, is_honeypot, can_change_balance,
         can_external_call,
         can_selfdestruct,
         can_set_cooldown,
+        is_opensource,
         can_set_fee,
         can_set_paused,
         can_take_ownership,
         created_at,
         owner,
-        contract_address } = result;
+        contract_address,
+        tax_info } = result;
 
       const dexscreenerLink = `https://dexscreener.com/ethereum/${contract_address}`;
+      const etherscanlink = `https://etherscan.io/address/${contract_address}`;
       const uniswapLink = `https://app.uniswap.org/#/swap?outputCurrency=${tokenAddress}`;
       const dextoolsLink = `https://www.dextools.io/app/en/ether/pair-explorer/${tokenAddress}`;
 
@@ -44,7 +47,7 @@ module.exports = {
         .setDescription(`Contract Address: \`\`\`${contract_address}\`\`\``)
         .setFooter({ text: 'DYOR! Not always accurate' })
         .addFields(
-          { name: 'Scam Token', value: formatFieldValue(is_scamtoken), inline: true },
+          { name: 'Contract is verified', value: is_opensource ? '✅' : '❌', inline: true },
           { name: 'Anti-whale Token', value: formatFieldValue(is_anti_whale), inline: true },
           { name: 'Honeypot Token', value: formatFieldValue(is_honeypot), inline: true },
           { name: 'Can Change Balance', value: formatFieldValue(can_change_balance), inline: true },
@@ -54,7 +57,8 @@ module.exports = {
           { name: 'Can Set Fee', value: formatFieldValue(can_set_fee), inline: true },
           { name: 'Can Set Paused', value: formatFieldValue(can_set_paused), inline: true },
           { name: 'Can Take Ownership', value: formatFieldValue(can_take_ownership), inline: true },
-          { name: 'Links', value: `[DexScreener](${dexscreenerLink})       [Uniswap](${uniswapLink})       [Dextools](${dextoolsLink})` }
+          { name: 'Buy Tax / Sell Tax', value: `Buy: ${tax_info.buy_tax || 'Unknown'} / Sell: ${tax_info.sell_tax || 'Unknown'}`, inline: true },
+          { name: 'Links', value: `[DexScreener](${dexscreenerLink}) [Dextools](${dextoolsLink}) [Uniswap](${uniswapLink})  [Etherscan](${etherscanlink})` }
         );
 
       interaction.reply({ embeds: [embed] });
