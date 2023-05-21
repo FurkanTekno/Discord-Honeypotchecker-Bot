@@ -13,7 +13,10 @@ module.exports = {
   async execute(interaction) {
     const tokenAddress = interaction.options.getString('tokenaddress');
 
-   try {
+    try {
+      // Defer the initial reply
+      await interaction.deferReply();
+
       const response = await axios.get(`https://approve.aegisweb3.com/api/User/TokenSecurity?address=${tokenAddress}&chainid=1`);
       const { errorCode, errorMsg, result } = response.data;
       const { token_name, token_symbol, is_scamtoken, is_anti_whale, is_honeypot, can_change_balance,
@@ -61,10 +64,11 @@ module.exports = {
           { name: 'Links', value: `[DexScreener](${dexscreenerLink}) [Dextools](${dextoolsLink}) [Uniswap](${uniswapLink})  [Etherscan](${etherscanlink})` }
         );
 
-      interaction.reply({ embeds: [embed] });
+      // Edit the deferred reply with the API response
+      await interaction.editReply({ embeds: [embed] });
     } catch (error) {
       console.error('Error occurred while analyzing the token:', error);
-      interaction.reply('An error occurred while analyzing the token. Please try again later.');
+      await interaction.reply('An error occurred while analyzing the token. Please try again later.');
     }
   },
 };
