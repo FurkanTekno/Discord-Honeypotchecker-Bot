@@ -21,5 +21,5 @@ To use the bot, simply add it to your Discord server and invoke the `/check` com
 1. Clone the repository
 2. Install dependencies with `npm install`
 3. Set up your Discord bot token 
-4. Run the bot using `node bot.js`
+4. Run the bot using `node index.js`
 
